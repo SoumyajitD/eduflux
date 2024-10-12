@@ -23,6 +23,8 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSignup, setIsSignup] = useState(false); // New state for toggling signup/login
   const [userRole, setUserRole] = useState(''); // New state for handling role (student/educator)
+  const [showAskAIInput, setShowAskAIInput] = useState(false); // New state for showing the input box
+const [aiQuestion, setAiQuestion] = useState(''); // State to store the question
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -44,7 +46,7 @@ const App = () => {
       .then((response) => {
         setEducator(response.data);
       })
-      .catch((error) => console.error('Error fetching educator details:', error));
+      .catch((error) => console.error('Error fetching  educator details:', error));
 
     axios.get('/api/educator/1/sessions')
       .then((response) => {
@@ -88,6 +90,40 @@ const App = () => {
       })
       .catch((error) => console.error('Error updating availability:', error));
   };
+  const handleAskAI = async () => {
+    try {
+      const apiUrl = 'https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29';
+  
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJraWQiOiIyMDI0MTAwMjA4NDIiLCJhbGciOiJSUzI1NiJ9.eyJpYW1faWQiOiJJQk1pZC02OTMwMDBLUzNVIiwiaWQiOiJJQk1pZC02OTMwMDBLUzNVIiwicmVhbG1pZCI6IklCTWlkIiwianRpIjoiZDM5YjEzOGEtODA4My00ZmFjLTk0Y2EtYWI3Yzg1NzYzYzgxIiwiaWRlbnRpZmllciI6IjY5MzAwMEtTM1UiLCJnaXZlbl9uYW1lIjoiU291bXlhaml0IiwiZmFtaWx5X25hbWUiOiJEYXduIiwibmFtZSI6IlNvdW15YWppdCBEYXduIiwiZW1haWwiOiJwc2x1OTQxQGdtYWlsLmNvbSIsInN1YiI6InBzbHU5NDFAZ21haWwuY29tIiwiYXV0aG4iOnsic3ViIjoicHNsdTk0MUBnbWFpbC5jb20iLCJpYW1faWQiOiJJQk1pZC02OTMwMDBLUzNVIiwibmFtZSI6IlNvdW15YWppdCBEYXduIiwiZ2l2ZW5fbmFtZSI6IlNvdW15YWppdCIsImZhbWlseV9uYW1lIjoiRGF3biIsImVtYWlsIjoicHNsdTk0MUBnbWFpbC5jb20ifSwiYWNjb3VudCI6eyJ2YWxpZCI6dHJ1ZSwiYnNzIjoiMDRjMzJiYjM5YjAwNDA2YjhjYTZlNTdjMDgxYTQ4MzYiLCJmcm96ZW4iOnRydWV9LCJpYXQiOjE3Mjg3NjcwMTYsImV4cCI6MTcyODc3MDYxNiwiaXNzIjoiaHR0cHM6Ly9pYW0uY2xvdWQuaWJtLmNvbS9pZGVudGl0eSIsImdyYW50X3R5cGUiOiJ1cm46aWJtOnBhcmFtczpvYXV0aDpncmFudC10eXBlOmFwaWtleSIsInNjb3BlIjoiaWJtIG9wZW5pZCIsImNsaWVudF9pZCI6ImJ4IiwiYWNyIjoxLCJhbXIiOlsicHdkIl19.WtPV8WAfKHjkbmn1HZzoXb1aIhydYgfcr4PyC_Oz0b-DKwStaxqhZZxAJjwoPt9xLFjl8ZvHP3lTO_sCGQgtqcCP8ToXpbQCRL72HDT_5u3uVPV3pPj0cDiTmIXMSeBl58bjJtqmVWy1YuLUFMJnYih4KxKSbGR0BrbDe6uPy2jEVz0aRvKgsgkNxQKfyGipbMtNYXUpat83QD5MjBF_EBpEvuBsFV11QVnbYHFfv0WRTL5IBqijVFFFSovWEdjcOm7rsTor7NV6bYgeBk_eE7uQik_ZvMlmPmJfAIEpniNnisKFBsg-Hjfqbd4nQF04Fpug2G3c3SE2Bm4NUdeMBg', // Replace with your actual API key
+      };
+  
+      const body = {
+        input: `<|begin_of_text|>${aiQuestion}<|eot_id|>`, // User's question from the TextField
+        parameters: {
+          decoding_method: "greedy",
+          max_new_tokens: 100,
+          min_new_tokens: 0,
+          stop_sequences: [],
+          repetition_penalty: 1
+        },
+        model_id: "meta-llama/llama-3-1-70b-instruct",
+        project_id: "fbb322c9-6145-4d91-a313-0a7c5d3037e2"
+      };
+  
+      const response = await axios.post(apiUrl, body, { headers });
+      alert('Your question has been sent to AI! Response: ' + JSON.stringify(response.data)); // Example feedback
+      setAiQuestion(''); // Clear the input after sending
+    } catch (error) {
+      console.error('Error sending question to AI:', error);
+      alert('Failed to send your question. Please try again.'); // Example error feedback
+    }
+  };
+  
+
+// Rest of your App component
+
 
   const renderEducatorDashboard = () => (
     <>
@@ -208,7 +244,7 @@ const App = () => {
         <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
           Welcome, Student!
         </Typography>
-
+  
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Button
@@ -216,10 +252,32 @@ const App = () => {
               fullWidth
               color="primary"
               startIcon={<QuestionAnswer />}
-              onClick={() => alert('Ask AI feature coming soon!')}
+              onClick={() => setShowAskAIInput(!showAskAIInput)} // Toggle input visibility
             >
               Ask AI
             </Button>
+            {showAskAIInput && ( // Show input box if toggle is true
+              <>
+                <TextField
+                  fullWidth
+                  label="Type your question"
+                  value={aiQuestion}
+                  onChange={(e) => setAiQuestion(e.target.value)}
+                  sx={{ mt: 2 }}
+                  multiline
+                  rows={4}
+                  variant="outlined"
+                />
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ mt: 2 }}
+                  onClick={handleAskAI} // Add this function for handling the API call
+                >
+                  Send Question
+                </Button>
+              </>
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
             <Button
@@ -234,7 +292,7 @@ const App = () => {
           </Grid>
         </Grid>
       </Card>
-
+  
       <Button
         variant="contained"
         color="secondary"
@@ -245,6 +303,7 @@ const App = () => {
       </Button>
     </>
   );
+  
 
   return (
     <Container maxWidth="lg" sx={{ mt: 5 }}>
