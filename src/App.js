@@ -94,10 +94,15 @@ const [aiResponse, setAiResponse] = useState('');
   const handleAskAI = async () => {
     try {
       const apiUrl = 'https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29';
+      const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+      const aUrl=corsProxy+apiUrl;
+      alert(aUrl)
 
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJraWQiOiIyMDI0MTAwMjA4NDIiLCJhbGciOiJSUzI1NiJ9.eyJpYW1faWQiOiJJQk1pZC02OTMwMDBLUzNVIiwiaWQiOiJJQk1pZC02OTMwMDBLUzNVIiwicmVhbG1pZCI6IklCTWlkIiwianRpIjoiZDM5YjEzOGEtODA4My00ZmFjLTk0Y2EtYWI3Yzg1NzYzYzgxIiwiaWRlbnRpZmllciI6IjY5MzAwMEtTM1UiLCJnaXZlbl9uYW1lIjoiU291bXlhaml0IiwiZmFtaWx5X25hbWUiOiJEYXduIiwibmFtZSI6IlNvdW15YWppdCBEYXduIiwiZW1haWwiOiJwc2x1OTQxQGdtYWlsLmNvbSIsInN1YiI6InBzbHU5NDFAZ21haWwuY29tIiwiYXV0aG4iOnsic3ViIjoicHNsdTk0MUBnbWFpbC5jb20iLCJpYW1faWQiOiJJQk1pZC02OTMwMDBLUzNVIiwibmFtZSI6IlNvdW15YWppdCBEYXduIiwiZ2l2ZW5fbmFtZSI6IlNvdW15YWppdCIsImZhbWlseV9uYW1lIjoiRGF3biIsImVtYWlsIjoicHNsdTk0MUBnbWFpbC5jb20ifSwiYWNjb3VudCI6eyJ2YWxpZCI6dHJ1ZSwiYnNzIjoiMDRjMzJiYjM5YjAwNDA2YjhjYTZlNTdjMDgxYTQ4MzYiLCJmcm96ZW4iOnRydWV9LCJpYXQiOjE3Mjg3NjcwMTYsImV4cCI6MTcyODc3MDYxNiwiaXNzIjoiaHR0cHM6Ly9pYW0uY2xvdWQuaWJtLmNvbS9pZGVudGl0eSIsImdyYW50X3R5cGUiOiJ1cm46aWJtOnBhcmFtczpvYXV0aDpncmFudC10eXBlOmFwaWtleSIsInNjb3BlIjoiaWJtIG9wZW5pZCIsImNsaWVudF9pZCI6ImJ4IiwiYWNyIjoxLCJhbXIiOlsicHdkIl19.WtPV8WAfKHjkbmn1HZzoXb1aIhydYgfcr4PyC_Oz0b-DKwStaxqhZZxAJjwoPt9xLFjl8ZvHP3lTO_sCGQgtqcCP8ToXpbQCRL72HDT_5u3uVPV3pPj0cDiTmIXMSeBl58bjJtqmVWy1YuLUFMJnYih4KxKSbGR0BrbDe6uPy2jEVz0aRvKgsgkNxQKfyGipbMtNYXUpat83QD5MjBF_EBpEvuBsFV11QVnbYHFfv0WRTL5IBqijVFFFSovWEdjcOm7rsTor7NV6bYgeBk_eE7uQik_ZvMlmPmJfAIEpniNnisKFBsg-Hjfqbd4nQF04Fpug2G3c3SE2Bm4NUdeMBg', // Replace with your actual API key
+        'Authorization': `Bearer ${process.env.REACT_APP_API_KEY}`,
+        'Origin': 'https://edufax.appflux.in',
+        'x-requested-with': 'XMLHttpRequest'
       };
 
       const body = {
