@@ -4,7 +4,7 @@ import { getFirestore } from 'firebase/firestore';
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBJERSr9NJsL4IccZ9-8Jle01a8tOlPiGE",
+  apiKey: "${env.key}",
   authDomain: "eduflux-bbe14.firebaseapp.com",
   projectId: "eduflux-bbe14",
   storageBucket: "eduflux-bbe14.appspot.com",
